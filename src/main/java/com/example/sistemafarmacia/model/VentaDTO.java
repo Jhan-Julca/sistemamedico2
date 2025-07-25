@@ -8,16 +8,18 @@ public class VentaDTO {
     private LocalDate fechaRegistro;
     private double precioTotal;
     private List<VentaDetalle> detalles;
+    private Sede sede;
     
     // Constructor vacío
     public VentaDTO() {}
     
     // Constructor completo
-    public VentaDTO(int idcliente, LocalDate fechaRegistro, double precioTotal, List<VentaDetalle> detalles) {
+    public VentaDTO(int idcliente, LocalDate fechaRegistro, double precioTotal, List<VentaDetalle> detalles, Sede sede) {
         this.idcliente = idcliente;
         this.fechaRegistro = fechaRegistro;
         this.precioTotal = precioTotal;
         this.detalles = detalles;
+        this.sede = sede;
     }
     
     // Getters y Setters
@@ -51,5 +53,13 @@ public class VentaDTO {
     
     public void setDetalles(List<VentaDetalle> detalles) {
         this.detalles = detalles;
+    }
+    
+    public Sede getSede() {
+        return sede;
+    }
+    
+    public void setSede(Sede sede) {
+        this.sede = sede;
     }
 }

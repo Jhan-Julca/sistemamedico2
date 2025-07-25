@@ -44,9 +44,9 @@ public class VentaController {
         venta.setIdcliente(ventaDTO.getIdcliente());
         venta.setFechaRegistro(ventaDTO.getFechaRegistro());
         venta.setPrecioTotal(ventaDTO.getPrecioTotal());
+        venta.setSede(ventaDTO.getSede()); // <-- Asegúrate de copiar la sede
 
-        // Registrar la venta junto con los detalles
-        Venta nuevaVenta = ventaService.addVenta(venta, ventaDTO.getDetalles());
+        ventaService.addVenta(venta, ventaDTO.getDetalles());
 
         // Actualizar inventario de productos
         for (VentaDetalle detalle : ventaDTO.getDetalles()) {
@@ -57,7 +57,7 @@ public class VentaController {
             }
         }
 
-        return ResponseEntity.ok(nuevaVenta);
+        return ResponseEntity.ok(venta);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
