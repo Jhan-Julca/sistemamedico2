@@ -35,7 +35,7 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
             // Verificar si el usuario existe y está activo
-            Usuario usuario = usuarioService.findByUsername(loginRequest.getUsername());
+            Usuario usuario = usuarioService.findByEmail(loginRequest.getEmail());
             if (usuario == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponse("Usuario no encontrado"));
@@ -49,13 +49,13 @@ public class AuthController {
             // Autenticar credenciales
             Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                    loginRequest.getUsername(), 
+                    loginRequest.getEmail(),
                     loginRequest.getPassword()
                 )
             );
 
             // Cargar detalles del usuario
-            UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getUsername());
+            UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getEmail());
             
             // Generar token con información adicional
             String token = jwtUtil.generateToken(userDetails.getUsername(), usuario);
@@ -100,7 +100,7 @@ public class AuthController {
             String username = jwtUtil.extractUsername(token);
 
             if (username != null && jwtUtil.validateToken(token)) {
-                Usuario usuario = usuarioService.findByUsername(username);
+                Usuario usuario = usuarioService.findByEmail(username);
                 if (usuario != null && (usuario.getActivo() == null || usuario.getActivo())) {
                     return ResponseEntity.ok(new TokenValidationResponse(
                         true,
@@ -133,7 +133,7 @@ public class AuthController {
             String username = jwtUtil.extractUsername(token);
 
             if (username != null) {
-                Usuario usuario = usuarioService.findByUsername(username);
+                Usuario usuario = usuarioService.findByEmail(username);
                 if (usuario != null && (usuario.getActivo() == null || usuario.getActivo())) {
                     String newToken = jwtUtil.generateToken(username, usuario);
                     return ResponseEntity.ok(new LoginResponse(

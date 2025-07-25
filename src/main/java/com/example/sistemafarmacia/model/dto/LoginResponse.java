@@ -3,12 +3,14 @@ package com.example.sistemafarmacia.model.dto;
 public class LoginResponse {
     private String token;
     private Long userId;
-    private String username;
+    private String email;
+    private String username; // Mantener para compatibilidad
     private String nombreCompleto;
     private String rol;
     private Long sedeId;
     private String sedeNombre;
     private long expiresIn;
+    private String tokenType = "Bearer";
 
     // Constructor original para compatibilidad
     public LoginResponse(String token) {
@@ -16,12 +18,13 @@ public class LoginResponse {
         this.expiresIn = 86400000; // 24 horas en milisegundos
     }
 
-    // Constructor completo
-    public LoginResponse(String token, Long userId, String username, String nombreCompleto, 
+    // Constructor completo actualizado
+    public LoginResponse(String token, Long userId, String email, String nombreCompleto, 
                         String rol, Long sedeId, String sedeNombre) {
         this.token = token;
         this.userId = userId;
-        this.username = username;
+        this.email = email;
+        this.username = email; // Username será igual al email para compatibilidad
         this.nombreCompleto = nombreCompleto;
         this.rol = rol;
         this.sedeId = sedeId;
@@ -46,8 +49,16 @@ public class LoginResponse {
         this.userId = userId;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getUsername() {
-        return username;
+        return username != null ? username : email;
     }
 
     public void setUsername(String username) {
@@ -92,5 +103,13 @@ public class LoginResponse {
 
     public void setExpiresIn(long expiresIn) {
         this.expiresIn = expiresIn;
+    }
+
+    public String getTokenType() {
+        return tokenType;
+    }
+
+    public void setTokenType(String tokenType) {
+        this.tokenType = tokenType;
     }
 }

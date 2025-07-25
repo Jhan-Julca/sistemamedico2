@@ -9,7 +9,44 @@ public class ReniecResponseDTO {
     @JsonProperty("nombres")
     private String nombres;
     
-    @JsonProperty("apellidoPaterno")
+    @JsonProperty("apellidoPapackage com.example.sistemafarmacia.model.dto;\r\n" + //
+                "\r\n" + //
+                "import jakarta.validation.constraints.Email;\r\n" + //
+                "import jakarta.validation.constraints.NotBlank;\r\n" + //
+                "\r\n" + //
+                "public class LoginRequest {\r\n" + //
+                "    @NotBlank(message = \"Email es requerido\")\r\n" + //
+                "    @Email(message = \"Email debe tener un formato válido\")\r\n" + //
+                "    private String email;\r\n" + //
+                "    \r\n" + //
+                "    @NotBlank(message = \"Password es requerido\")\r\n" + //
+                "    private String password;\r\n" + //
+                "\r\n" + //
+                "    public String getEmail() {\r\n" + //
+                "        return email;\r\n" + //
+                "    }\r\n" + //
+                "\r\n" + //
+                "    public void setEmail(String email) {\r\n" + //
+                "        this.email = email;\r\n" + //
+                "    }\r\n" + //
+                "\r\n" + //
+                "    public String getPassword() {\r\n" + //
+                "        return password;\r\n" + //
+                "    }\r\n" + //
+                "\r\n" + //
+                "    public void setPassword(String password) {\r\n" + //
+                "        this.password = password;\r\n" + //
+                "    }\r\n" + //
+                "    \r\n" + //
+                "    // Método de compatibilidad para username (se mapeará al email)\r\n" + //
+                "    public String getUsername() {\r\n" + //
+                "        return this.email;\r\n" + //
+                "    }\r\n" + //
+                "    \r\n" + //
+                "    public void setUsername(String username) {\r\n" + //
+                "        this.email = username;\r\n" + //
+                "    }\r\n" + //
+                "}terno")
     private String apellidoPaterno;
     
     @JsonProperty("apellidoMaterno")

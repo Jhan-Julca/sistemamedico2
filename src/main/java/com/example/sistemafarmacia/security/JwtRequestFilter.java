@@ -33,32 +33,33 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
         final String requestURI = request.getRequestURI();
         
-        String username = null;
+        String email = null;
         String jwt = null;
 
         // Extraer JWT del header Authorization
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             jwt = authHeader.substring(7);
             try {
-                username = jwtUtil.extractUsername(jwt);
+                // Extraer email del token (que está guardado como username en el JWT)
+                email = jwtUtil.extractUsername(jwt);
             } catch (Exception e) {
-                logger.warn("Error extrayendo username del JWT: " + e.getMessage());
+                logger.warn("Error extrayendo email del JWT: " + e.getMessage());
                 // Continuar sin establecer autenticación
             }
         }
 
         // Validar y establecer autenticación
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
                 // Validar token
                 if (jwtUtil.validateToken(jwt)) {
                     
                     // Verificar que el usuario siga activo en la base de datos
-                    Usuario usuario = usuarioService.findByUsername(username);
-                    if (usuario != null && (usuario.getActivo() == null || usuario.getActivo())) {
+                    Usuario usuario = usuarioService.findByEmail(email);
+                    if (usuario != null && usuario.isActivo()) {
                         
-                        // Cargar detalles del usuario
-                        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                        // Cargar detalles del usuario usando email
+                        UserDetails userDetails = userDetailsService.loadUserByEmail(email);
                         
                         // Crear token de autenticación
                         UsernamePasswordAuthenticationToken authToken = 
@@ -73,25 +74,30 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                         
                         // Agregar información adicional al contexto de seguridad
                         request.setAttribute("userId", jwtUtil.extractUserId(jwt));
+                        request.setAttribute("userEmail", email);
                         request.setAttribute("userRole", jwtUtil.extractUserRole(jwt));
                         request.setAttribute("sedeId", jwtUtil.extractSedeId(jwt));
+                        request.setAttribute("nombreCompleto", jwtUtil.extractNombreCompleto(jwt));
                         
                         // Establecer autenticación en el contexto de seguridad
                         SecurityContextHolder.getContext().setAuthentication(authToken);
                         
                         // Log para debug (opcional)
-                        logger.debug("Usuario autenticado: " + username + " para URI: " + requestURI);
+                        logger.debug("Usuario autenticado: " + email + " para URI: " + requestURI);
                         
                     } else {
-                        logger.warn("Usuario inactivo o no encontrado: " + username);
+                        logger.warn("Usuario inactivo o no encontrado: " + email);
+                        // Limpiar cualquier autenticación previa
+                        SecurityContextHolder.clearContext();
                     }
                 } else {
-                    logger.debug("Token JWT inválido para usuario: " + username);
+                    logger.debug("Token JWT inválido para usuario: " + email);
                 }
                 
             } catch (Exception e) {
                 logger.error("Error procesando JWT: " + e.getMessage());
-                // No establecer autenticación en caso de error
+                // Limpiar contexto de seguridad en caso de error
+                SecurityContextHolder.clearContext();
             }
         }
 
@@ -110,6 +116,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                path.startsWith("/static/") ||
                path.startsWith("/public/") ||
                path.contains("swagger") ||
-               path.contains("api-docs");
+               path.contains("api-docs") ||
+               path.equals("/favicon.ico") ||
+               path.startsWith("/actuator/health");
     }
 }
