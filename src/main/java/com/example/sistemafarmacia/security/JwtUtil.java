@@ -29,21 +29,24 @@ public class JwtUtil {
     // Generar token con información completa del usuario
     public String generateToken(String username, Usuario usuario) {
         Map<String, Object> claims = new HashMap<>();
-        
         if (usuario != null) {
             claims.put("userId", usuario.getId());
             claims.put("nombreCompleto", usuario.getNombreCompleto());
-            claims.put("rol", usuario.getRol().name());
+            // Guardar roles como lista de strings
+            if (usuario.getRoles() != null) {
+                java.util.List<String> rolesList = new java.util.ArrayList<>();
+                for (var rol : usuario.getRoles()) {
+                    rolesList.add(rol.name());
+                }
+                claims.put("roles", rolesList);
+            }
             claims.put("email", usuario.getEmail());
-            
             if (usuario.getSede() != null) {
                 claims.put("sedeId", usuario.getSede().getId());
                 claims.put("sedeNombre", usuario.getSede().getNombre());
             }
-            
             claims.put("activo", usuario.getActivo());
         }
-        
         return createToken(claims, username, EXPIRATION);
     }
 
@@ -132,9 +135,19 @@ public class JwtUtil {
         return userId != null ? Long.valueOf(userId.toString()) : null;
     }
 
-    public String extractUserRole(String token) {
+    // Extraer lista de roles del token
+    public java.util.List<String> extractUserRoles(String token) {
         Claims claims = extractAllClaims(token);
-        return (String) claims.get("rol");
+        Object rolesObj = claims.get("roles");
+        if (rolesObj instanceof java.util.List<?>) {
+            java.util.List<?> rawList = (java.util.List<?>) rolesObj;
+            java.util.List<String> roles = new java.util.ArrayList<>();
+            for (Object o : rawList) {
+                if (o != null) roles.add(o.toString());
+            }
+            return roles;
+        }
+        return java.util.Collections.emptyList();
     }
 
     public String extractNombreCompleto(String token) {

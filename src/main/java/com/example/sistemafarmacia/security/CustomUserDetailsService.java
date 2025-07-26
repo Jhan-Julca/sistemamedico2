@@ -57,40 +57,41 @@ public class CustomUserDetailsService implements UserDetailsService {
         @Override
         public Collection<? extends GrantedAuthority> getAuthorities() {
             List<GrantedAuthority> authorities = new ArrayList<>();
-            
-            // Agregar rol con prefijo ROLE_
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + usuario.getRol().name()));
-            
-            // Agregar permisos específicos basados en el rol
-            switch (usuario.getRol()) {
-                case ADMIN:
-                    authorities.add(new SimpleGrantedAuthority("PERM_USER_MANAGE"));
-                    authorities.add(new SimpleGrantedAuthority("PERM_SEDE_MANAGE"));
-                    authorities.add(new SimpleGrantedAuthority("PERM_PRODUCT_MANAGE"));
-                    authorities.add(new SimpleGrantedAuthority("PERM_SALE_MANAGE"));
-                    authorities.add(new SimpleGrantedAuthority("PERM_CLIENT_MANAGE"));
-                    authorities.add(new SimpleGrantedAuthority("PERM_REPORT_VIEW"));
-                    authorities.add(new SimpleGrantedAuthority("PERM_CACHE_MANAGE"));
-                    break;
-                case ENCARGADO:
-                    authorities.add(new SimpleGrantedAuthority("PERM_PRODUCT_MANAGE"));
-                    authorities.add(new SimpleGrantedAuthority("PERM_SALE_MANAGE"));
-                    authorities.add(new SimpleGrantedAuthority("PERM_CLIENT_MANAGE"));
-                    authorities.add(new SimpleGrantedAuthority("PERM_REPORT_VIEW"));
-                    authorities.add(new SimpleGrantedAuthority("PERM_SEDE_VIEW"));
-                    break;
-                case VENDEDOR:
-                    authorities.add(new SimpleGrantedAuthority("PERM_SALE_CREATE"));
-                    authorities.add(new SimpleGrantedAuthority("PERM_CLIENT_MANAGE"));
-                    authorities.add(new SimpleGrantedAuthority("PERM_PRODUCT_VIEW"));
-                    break;
-                case ALMACENERO:
-                    authorities.add(new SimpleGrantedAuthority("PERM_PRODUCT_MANAGE"));
-                    authorities.add(new SimpleGrantedAuthority("PERM_INVENTORY_MANAGE"));
-                    authorities.add(new SimpleGrantedAuthority("PERM_PRODUCT_VIEW"));
-                    break;
+            if (usuario.getRoles() != null) {
+                for (var rol : usuario.getRoles()) {
+                    // Agregar rol con prefijo ROLE_
+                    authorities.add(new SimpleGrantedAuthority("ROLE_" + rol.name()));
+                    // Agregar permisos específicos basados en el rol
+                    switch (rol) {
+                        case ADMIN:
+                            authorities.add(new SimpleGrantedAuthority("PERM_USER_MANAGE"));
+                            authorities.add(new SimpleGrantedAuthority("PERM_SEDE_MANAGE"));
+                            authorities.add(new SimpleGrantedAuthority("PERM_PRODUCT_MANAGE"));
+                            authorities.add(new SimpleGrantedAuthority("PERM_SALE_MANAGE"));
+                            authorities.add(new SimpleGrantedAuthority("PERM_CLIENT_MANAGE"));
+                            authorities.add(new SimpleGrantedAuthority("PERM_REPORT_VIEW"));
+                            authorities.add(new SimpleGrantedAuthority("PERM_CACHE_MANAGE"));
+                            break;
+                        case ENCARGADO:
+                            authorities.add(new SimpleGrantedAuthority("PERM_PRODUCT_MANAGE"));
+                            authorities.add(new SimpleGrantedAuthority("PERM_SALE_MANAGE"));
+                            authorities.add(new SimpleGrantedAuthority("PERM_CLIENT_MANAGE"));
+                            authorities.add(new SimpleGrantedAuthority("PERM_REPORT_VIEW"));
+                            authorities.add(new SimpleGrantedAuthority("PERM_SEDE_VIEW"));
+                            break;
+                        case VENDEDOR:
+                            authorities.add(new SimpleGrantedAuthority("PERM_SALE_CREATE"));
+                            authorities.add(new SimpleGrantedAuthority("PERM_CLIENT_MANAGE"));
+                            authorities.add(new SimpleGrantedAuthority("PERM_PRODUCT_VIEW"));
+                            break;
+                        case ALMACENERO:
+                            authorities.add(new SimpleGrantedAuthority("PERM_PRODUCT_MANAGE"));
+                            authorities.add(new SimpleGrantedAuthority("PERM_INVENTORY_MANAGE"));
+                            authorities.add(new SimpleGrantedAuthority("PERM_PRODUCT_VIEW"));
+                            break;
+                    }
+                }
             }
-            
             return authorities;
         }
 
@@ -142,8 +143,13 @@ public class CustomUserDetailsService implements UserDetailsService {
             return usuario.getNombreCompleto();
         }
 
-        public String getRol() {
-            return usuario.getRol().name();
+        public java.util.Set<String> getRoles() {
+            if (usuario.getRoles() == null) return java.util.Collections.emptySet();
+            java.util.Set<String> rolesStr = new java.util.HashSet<>();
+            for (var rol : usuario.getRoles()) {
+                rolesStr.add(rol.name());
+            }
+            return rolesStr;
         }
 
         public Long getSedeId() {

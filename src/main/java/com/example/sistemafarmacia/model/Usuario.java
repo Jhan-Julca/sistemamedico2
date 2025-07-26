@@ -29,9 +29,11 @@ public class Usuario {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @ElementCollection(targetClass = Rol.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "usuario_roles", joinColumns = @JoinColumn(name = "usuario_id"))
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Rol rol;
+    @Column(name = "rol", nullable = false)
+    private java.util.Set<Rol> roles = new java.util.HashSet<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "sede_id")
@@ -43,11 +45,11 @@ public class Usuario {
     // Constructores
     public Usuario() {}
 
-    public Usuario(String email, String password, String nombreCompleto, Rol rol) {
+    public Usuario(String email, String password, String nombreCompleto, java.util.Set<Rol> roles) {
         this.email = email;
         this.password = password;
         this.nombreCompleto = nombreCompleto;
-        this.rol = rol;
+        this.roles = roles;
         this.activo = true;
         this.username = email; // Por defecto, username será el email
     }
@@ -97,12 +99,12 @@ public class Usuario {
         }
     }
 
-    public Rol getRol() {
-        return rol;
+    public java.util.Set<Rol> getRoles() {
+        return roles;
     }
 
-    public void setRol(Rol rol) {
-        this.rol = rol;
+    public void setRoles(java.util.Set<Rol> roles) {
+        this.roles = roles;
     }
 
     public Sede getSede() {
@@ -136,7 +138,7 @@ public class Usuario {
                 "id=" + id +
                 ", email='" + email + '\'' +
                 ", nombreCompleto='" + nombreCompleto + '\'' +
-                ", rol=" + rol +
+                ", roles=" + roles +
                 ", activo=" + activo +
                 '}';
     }

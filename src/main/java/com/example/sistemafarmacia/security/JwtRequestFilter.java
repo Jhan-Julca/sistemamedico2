@@ -75,7 +75,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                         // Agregar información adicional al contexto de seguridad
                         request.setAttribute("userId", jwtUtil.extractUserId(jwt));
                         request.setAttribute("userEmail", email);
-                        request.setAttribute("userRole", jwtUtil.extractUserRole(jwt));
+                        request.setAttribute("userRole", jwtUtil.extractUserRoles(jwt));
                         request.setAttribute("sedeId", jwtUtil.extractSedeId(jwt));
                         request.setAttribute("nombreCompleto", jwtUtil.extractNombreCompleto(jwt));
                         

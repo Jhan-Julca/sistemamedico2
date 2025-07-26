@@ -6,7 +6,7 @@ public class LoginResponse {
     private String email;
     private String username; // Mantener para compatibilidad
     private String nombreCompleto;
-    private String rol;
+    private java.util.Set<com.example.sistemafarmacia.model.Rol> roles;
     private Long sedeId;
     private String sedeNombre;
     private long expiresIn;
@@ -18,15 +18,15 @@ public class LoginResponse {
         this.expiresIn = 86400000; // 24 horas en milisegundos
     }
 
-    // Constructor completo actualizado
+    // Constructor completo actualizado para múltiples roles
     public LoginResponse(String token, Long userId, String email, String nombreCompleto, 
-                        String rol, Long sedeId, String sedeNombre) {
+                        java.util.Set<com.example.sistemafarmacia.model.Rol> roles, Long sedeId, String sedeNombre) {
         this.token = token;
         this.userId = userId;
         this.email = email;
         this.username = email; // Username será igual al email para compatibilidad
         this.nombreCompleto = nombreCompleto;
-        this.rol = rol;
+        this.roles = roles;
         this.sedeId = sedeId;
         this.sedeNombre = sedeNombre;
         this.expiresIn = 86400000; // 24 horas en milisegundos
@@ -73,12 +73,12 @@ public class LoginResponse {
         this.nombreCompleto = nombreCompleto;
     }
 
-    public String getRol() {
-        return rol;
+    public java.util.Set<com.example.sistemafarmacia.model.Rol> getRoles() {
+        return roles;
     }
 
-    public void setRol(String rol) {
-        this.rol = rol;
+    public void setRoles(java.util.Set<com.example.sistemafarmacia.model.Rol> roles) {
+        this.roles = roles;
     }
 
     public Long getSedeId() {

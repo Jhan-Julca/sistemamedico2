@@ -183,10 +183,11 @@ public class UsuarioController {
             stats.put("activos", usuariosActivos.size());
             stats.put("inactivos", todosUsuarios.size() - usuariosActivos.size());
             
-            // Contar por roles
+            // Contar por roles (soportando múltiples roles por usuario)
             Map<String, Long> porRoles = todosUsuarios.stream()
+                .flatMap(u -> u.getRoles().stream())
                 .collect(Collectors.groupingBy(
-                    u -> u.getRol().name(),
+                    Enum::name,
                     Collectors.counting()
                 ));
             stats.put("porRoles", porRoles);

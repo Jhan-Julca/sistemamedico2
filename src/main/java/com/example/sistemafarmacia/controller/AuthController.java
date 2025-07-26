@@ -60,13 +60,13 @@ public class AuthController {
             // Generar token con información adicional
             String token = jwtUtil.generateToken(userDetails.getUsername(), usuario);
             
-            // Crear respuesta con información del usuario
+            // Crear respuesta con información del usuario (roles como lista)
             LoginResponse response = new LoginResponse(
                 token,
                 usuario.getId(),
                 usuario.getUsername(),
                 usuario.getNombreCompleto(),
-                usuario.getRol().name(),
+                usuario.getRoles(),
                 usuario.getSede() != null ? usuario.getSede().getId() : null,
                 usuario.getSede() != null ? usuario.getSede().getNombre() : null
             );
@@ -106,7 +106,7 @@ public class AuthController {
                         true,
                         usuario.getId(),
                         usuario.getUsername(),
-                        usuario.getRol().name(),
+                        usuario.getRoles(),
                         usuario.getSede() != null ? usuario.getSede().getId() : null
                     ));
                 }
@@ -141,7 +141,7 @@ public class AuthController {
                         usuario.getId(),
                         usuario.getUsername(),
                         usuario.getNombreCompleto(),
-                        usuario.getRol().name(),
+                        usuario.getRoles(),
                         usuario.getSede() != null ? usuario.getSede().getId() : null,
                         usuario.getSede() != null ? usuario.getSede().getNombre() : null
                     ));
@@ -175,14 +175,14 @@ public class AuthController {
         private boolean valid;
         private Long userId;
         private String username;
-        private String role;
+        private java.util.Set<com.example.sistemafarmacia.model.Rol> roles;
         private Long sedeId;
 
-        public TokenValidationResponse(boolean valid, Long userId, String username, String role, Long sedeId) {
+        public TokenValidationResponse(boolean valid, Long userId, String username, java.util.Set<com.example.sistemafarmacia.model.Rol> roles, Long sedeId) {
             this.valid = valid;
             this.userId = userId;
             this.username = username;
-            this.role = role;
+            this.roles = roles;
             this.sedeId = sedeId;
         }
 
@@ -190,7 +190,7 @@ public class AuthController {
         public boolean isValid() { return valid; }
         public Long getUserId() { return userId; }
         public String getUsername() { return username; }
-        public String getRole() { return role; }
+        public java.util.Set<com.example.sistemafarmacia.model.Rol> getRoles() { return roles; }
         public Long getSedeId() { return sedeId; }
     }
 }
