@@ -1,0 +1,13 @@
+.dashboard-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin-top: 2rem;
+}
+mat-card {
+  width: 100%;
+  max-width: 600px;
+}
+.chart-container {
+  margin-top: 2rem;
+}

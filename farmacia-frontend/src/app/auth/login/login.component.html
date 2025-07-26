@@ -1,0 +1,20 @@
+<div class="login-container">
+  <mat-card>
+    <mat-card-title>Iniciar Sesión</mat-card-title>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" type="email" required>
+        <mat-error *ngIf="form.get('email')?.invalid">Email inválido</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Contraseña</mat-label>
+        <input matInput formControlName="password" type="password" required>
+        <mat-error *ngIf="form.get('password')?.invalid">Contraseña requerida</mat-error>
+      </mat-form-field>
+      <button mat-raised-button color="primary" class="full-width" [disabled]="loading">Entrar</button>
+      <mat-progress-spinner *ngIf="loading" diameter="30" mode="indeterminate"></mat-progress-spinner>
+      <div *ngIf="error" class="error-message">{{ error }}</div>
+    </form>
+  </mat-card>
+</div>

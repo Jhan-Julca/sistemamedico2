@@ -1,0 +1,26 @@
+<div class="ventas-container">
+  <mat-card>
+    <mat-card-title>Ventas</mat-card-title>
+    <mat-card-content>
+      <div *ngIf="loading" class="loading-container">
+        <mat-progress-spinner diameter="40" mode="indeterminate"></mat-progress-spinner>
+      </div>
+      <div *ngIf="error" class="error-message">{{ error }}</div>
+      <table *ngIf="ventas && ventas.length">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let v of ventas">
+            <td>{{ v.fechaRegistro | date:'shortDate' }}</td>
+            <td>{{ v.precioTotal | currency }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div *ngIf="ventas && !ventas.length">No hay ventas registradas.</div>
+    </mat-card-content>
+  </mat-card>
+</div>
