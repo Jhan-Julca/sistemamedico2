@@ -6,6 +6,10 @@ import com.example.sistemafarmacia.service.ProductoService;
 import com.example.sistemafarmacia.service.VentaService;
 import com.example.sistemafarmacia.model.Venta;
 import com.example.sistemafarmacia.model.VentaDTO;
+import com.example.sistemafarmacia.model.Cliente;
+import com.example.sistemafarmacia.model.Empresa;
+import com.example.sistemafarmacia.service.ClienteService;
+import com.example.sistemafarmacia.service.EmpresaService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +28,12 @@ public class VentaController {
     @Autowired
     private ProductoService productoService;
 
+    @Autowired
+    private ClienteService clienteService;
+
+    @Autowired
+    private EmpresaService empresaService;
+
     @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     @GetMapping
     public List<Venta> getAllVentas() {
@@ -39,12 +49,30 @@ public class VentaController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     @PostMapping
-    public ResponseEntity<Venta> addVenta(@RequestBody VentaDTO ventaDTO) {
+    public ResponseEntity<?> addVenta(@RequestBody VentaDTO ventaDTO) {
+        // Validar que solo uno esté presente
+        if (!ventaDTO.isValid()) {
+            return ResponseEntity.badRequest().body("Debe enviar solo idCliente o idEmpresa, no ambos ni ninguno.");
+        }
+
         Venta venta = new Venta();
-        venta.setIdcliente(ventaDTO.getIdcliente());
         venta.setFechaRegistro(ventaDTO.getFechaRegistro());
         venta.setPrecioTotal(ventaDTO.getPrecioTotal());
-        venta.setSede(ventaDTO.getSede()); // <-- Asegúrate de copiar la sede
+        venta.setSede(ventaDTO.getSede());
+
+        if (ventaDTO.getIdCliente() != null) {
+            Cliente cliente = clienteService.getClienteById(ventaDTO.getIdCliente());
+            if (cliente == null) {
+                return ResponseEntity.badRequest().body("Cliente no encontrado");
+            }
+            venta.setCliente(cliente);
+        } else if (ventaDTO.getIdEmpresa() != null) {
+            Empresa empresa = empresaService.obtenerOCrearEmpresa(ventaDTO.getIdEmpresa());
+            if (empresa == null) {
+                return ResponseEntity.badRequest().body("Empresa no encontrada o inválida");
+            }
+            venta.setEmpresa(empresa);
+        }
 
         ventaService.addVenta(venta, ventaDTO.getDetalles());
 
